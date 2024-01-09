@@ -1,0 +1,41 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+		vendor = JvmVendorSpec.ADOPTIUM
+	}
+}
+
+group = 'com.github.atomfrede'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.data:spring-data-commons"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.webjars:webjars-locator:0.50"
+	implementation "org.webjars.npm:todomvc-common:1.0.5"
+	implementation "org.webjars.npm:todomvc-app-css:2.4.1"
+	testImplementation "com.microsoft.playwright:playwright:1.40.0"
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	developmentOnly "org.springframework.boot:spring-boot-devtools"
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
