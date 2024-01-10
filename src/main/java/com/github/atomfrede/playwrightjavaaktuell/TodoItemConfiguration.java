@@ -27,6 +27,11 @@ public class TodoItemConfiguration {
                 .roles("USER", "ADMIN")
                 .build();
 
+        UserDetails duke = User.withUsername("duke")
+                .password(passwordEncoder.encode("java"))
+                .roles("USER")
+                .build();
+
         return new InMemoryUserDetailsManager(user, admin);
     }
 

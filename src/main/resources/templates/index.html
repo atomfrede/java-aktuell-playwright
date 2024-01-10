@@ -1,10 +1,13 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Template • TodoMVC</title>
     <link rel="stylesheet" th:href="@{/webjars/todomvc-common/base.css}">
     <link rel="stylesheet" th:href="@{/webjars/todomvc-app-css/index.css}">
@@ -79,11 +82,12 @@
     </footer>
 </section>
 <footer class="info">
-    <p>Double-click to edit a todo</p>
-    <!-- Remove the below line ↓ -->
-    <p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
-    <!-- Change this out with your name and url ↓ -->
-    <p>Created by <a href="http://todomvc.com">you</a></p>
+    <p>You're signed in as <span sec:authentication="name">Bob</span></p>
+    <p>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" style="cursor:pointer;">Sign out</button>
+    </form>
+    </p>
     <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
 </footer>
 <!-- Scripts here. Don't remove ↓ -->
