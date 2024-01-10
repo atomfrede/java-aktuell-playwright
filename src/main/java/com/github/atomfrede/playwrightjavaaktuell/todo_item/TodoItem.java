@@ -3,13 +3,15 @@ package com.github.atomfrede.playwrightjavaaktuell.todo_item;
 public class TodoItem {
 
     private Long id;
+    private String user;
     private String title;
     private boolean completed;
 
-    public TodoItem(Long id, String title, boolean completed) {
+    public TodoItem(Long id, String title, boolean completed, String user) {
         this.id = id;
         this.title = title;
         this.completed = completed;
+        this.user = user;
     }
 
     public Long getId() {
@@ -18,6 +20,10 @@ public class TodoItem {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getUser() {
+        return this.user;
     }
 
     public void setTitle(String title) {

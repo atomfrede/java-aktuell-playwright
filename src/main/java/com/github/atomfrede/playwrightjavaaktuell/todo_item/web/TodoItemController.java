@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,42 +30,43 @@ public class TodoItemController {
     }
 
     @GetMapping
-    public String index(Model model) {
-        addAttributesForIndex(model, ListFilter.ALL);
+    public String index(Model model, Principal principal) {
+        addAttributesForIndex(model, principal.getName(), ListFilter.ALL);
         return "index";
     }
 
     @GetMapping("/active")
-    public String indexActive(Model model) {
-        addAttributesForIndex(model, ListFilter.ACTIVE);
+    public String indexActive(Model model, Principal principal) {
+        addAttributesForIndex(model, principal.getName(), ListFilter.ACTIVE);
         return "index";
     }
 
     @GetMapping("/completed")
-    public String indexCompleted(Model model) {
-        addAttributesForIndex(model, ListFilter.COMPLETED);
+    public String indexCompleted(Model model, Principal principal) {
+        addAttributesForIndex(model, principal.getName(), ListFilter.COMPLETED);
         return "index";
     }
 
     private void addAttributesForIndex(Model model,
+                                       String user,
                                        ListFilter listFilter) {
         model.addAttribute("item", new TodoItemFormData());
         model.addAttribute("filter", listFilter);
-        model.addAttribute("todos", getTodoItems(listFilter));
-        model.addAttribute("totalNumberOfItems", repository.count());
-        model.addAttribute("numberOfActiveItems", getNumberOfActiveItems());
-        model.addAttribute("numberOfCompletedItems", getNumberOfCompletedItems());
+        model.addAttribute("todos", getTodoItems(listFilter, user));
+        model.addAttribute("totalNumberOfItems", repository.count(user));
+        model.addAttribute("numberOfActiveItems", getNumberOfActiveItems(user));
+        model.addAttribute("numberOfCompletedItems", getNumberOfCompletedItems(user));
     }
 
     @PostMapping
-    public String addNewTodoItem(@Valid @ModelAttribute("item") TodoItemFormData formData) {
-        repository.save(new TodoItem(repository.nextId(), formData.getTitle(), false));
+    public String addNewTodoItem(@Valid @ModelAttribute("item") TodoItemFormData formData, Principal principal) {
+        repository.save(new TodoItem(repository.nextId(principal.getName()), formData.getTitle(), false, principal.getName()));
 
         return "redirect:/";
     }
 
     @PutMapping("/{id}/toggle")
-    public String toggleSelection(@PathVariable("id") Long id) {
+    public String toggleSelection(@PathVariable("id") Long id, Principal principal) {
         TodoItem todoItem = repository.findById(id)
                 .orElseThrow(() -> new TodoItemNotFoundException(id));
 
@@ -74,8 +76,8 @@ public class TodoItemController {
     }
 
     @PutMapping("/toggle-all")
-    public String toggleAll() {
-        Iterable<TodoItem> todoItems = repository.findAll();
+    public String toggleAll(Principal principal) {
+        Iterable<TodoItem> todoItems = repository.findAll(principal.getName());
         for (TodoItem todoItem : todoItems) {
             todoItem.setCompleted(!todoItem.isCompleted());
             repository.save(todoItem);
@@ -91,20 +93,20 @@ public class TodoItemController {
     }
 
     @DeleteMapping("/completed")
-    public String deleteCompletedItems() {
-        List<TodoItem> items = repository.findAllByCompleted(true);
+    public String deleteCompletedItems(Principal principal) {
+        List<TodoItem> items = repository.findAllByCompleted(principal.getName(), true);
         for (TodoItem item : items) {
             repository.deleteById(item.getId());
         }
         return "redirect:/";
     }
 
-    private List<TodoItemDto> getTodoItems(ListFilter filter) {
+    private List<TodoItemDto> getTodoItems(ListFilter filter, String user) {
 
         return switch (filter) {
-            case ALL -> convertToDto(repository.findAll());
-            case ACTIVE -> convertToDto(repository.findAllByCompleted(false));
-            case COMPLETED -> convertToDto(repository.findAllByCompleted(true));
+            case ALL -> convertToDto(repository.findAll(user));
+            case ACTIVE -> convertToDto(repository.findAllByCompleted(user, false));
+            case COMPLETED -> convertToDto(repository.findAllByCompleted(user, true));
         };
     }
 
@@ -117,12 +119,12 @@ public class TodoItemController {
         return results;
     }
 
-    private int getNumberOfActiveItems() {
-        return repository.countAllByCompleted(false);
+    private int getNumberOfActiveItems(String user) {
+        return repository.countAllByCompleted(user, false);
     }
 
-    private int getNumberOfCompletedItems() {
-        return repository.countAllByCompleted(true);
+    private int getNumberOfCompletedItems(String user) {
+        return repository.countAllByCompleted(user, true);
     }
 
     public static record TodoItemDto(long id, String title, boolean completed) {

@@ -9,8 +9,14 @@ import java.util.List;
 @NoRepositoryBean
 public interface TodoItemRepository extends CrudRepository<TodoItem, Long> {
 
-    long nextId();
-    int countAllByCompleted(boolean completed);
+    long nextId(String user);
+    int countAllByCompleted(String user, boolean completed);
 
-    List<TodoItem> findAllByCompleted(boolean completed);
+    List<TodoItem> findAllByCompleted(String user, boolean completed);
+
+    Iterable<TodoItem> findAll(String user);
+
+    long count(String user);
+
+
 }

@@ -12,16 +12,22 @@ import java.util.stream.Collectors;
 @Repository
 public class TodoItemInMemoryRepository implements TodoItemRepository {
 
-    private Map<Long, TodoItem> todoItems = new HashMap<>();
+    private Map<String, Map<Long, TodoItem>> todoItems = new HashMap<>();
+
+    private void init(String user) {
+        todoItems.putIfAbsent(user, new HashMap<>());
+    }
 
     @Override
-    public long nextId() {
-        return todoItems.size() + 10;
+    public long nextId(String user) {
+        init(user);
+        return todoItems.get(user).size() + 10;
     }
 
     @Override
     public <S extends TodoItem> S save(S entity) {
-        todoItems.put(entity.getId(), entity);
+        init(entity.getUser());
+        todoItems.get(entity.getUser()).put(entity.getId(), entity);
         return entity;
     }
 
@@ -33,7 +39,7 @@ public class TodoItemInMemoryRepository implements TodoItemRepository {
 
     @Override
     public Optional<TodoItem> findById(Long id) {
-        return todoItems.values().stream().filter(todoItem -> todoItem.getId().equals(id)).findFirst();
+        return todoItems.values().stream().flatMap(it -> it.values().stream()).filter(todoItem -> todoItem.getId().equals(id)).findFirst();
     }
 
     @Override
@@ -43,14 +49,14 @@ public class TodoItemInMemoryRepository implements TodoItemRepository {
 
     @Override
     public Iterable<TodoItem> findAll() {
-        return new ArrayList<>(todoItems.values());
+        return todoItems.values().stream().flatMap(it -> it.values().stream()).toList();
     }
 
     @Override
     public Iterable<TodoItem> findAllById(Iterable<Long> longs) {
         List<Long> ids = new ArrayList<>();
         longs.iterator().forEachRemaining(ids::add);
-        return todoItems.values().stream().filter(it -> ids.contains(it.getId())).collect(Collectors.toList());
+        return todoItems.values().stream().flatMap(it -> it.values().stream()).filter(it -> ids.contains(it.getId())).collect(Collectors.toList());
     }
 
     @Override
@@ -59,13 +65,20 @@ public class TodoItemInMemoryRepository implements TodoItemRepository {
     }
 
     @Override
+    public long count(String user) {
+        init(user);
+        return todoItems.size();
+    }
+
+    @Override
     public void deleteById(Long id) {
-        todoItems.remove(id);
+        todoItems.forEach((k,v) -> v.remove(id));
     }
 
     @Override
     public void delete(TodoItem entity) {
-        todoItems.remove(entity.getId());
+        init(entity.getUser());
+        todoItems.get(entity.getUser()).remove(entity.getId());
     }
 
     @Override
@@ -84,12 +97,20 @@ public class TodoItemInMemoryRepository implements TodoItemRepository {
     }
 
     @Override
-    public int countAllByCompleted(boolean completed) {
-        return (int) todoItems.values().stream().filter(it -> it.isCompleted() == completed).count();
+    public int countAllByCompleted(String user, boolean completed) {
+        init(user);
+        return (int) todoItems.get(user).values().stream().filter(it -> it.isCompleted() == completed).count();
     }
 
     @Override
-    public List<TodoItem> findAllByCompleted(boolean completed) {
-        return todoItems.values().stream().filter(it -> it.isCompleted() == completed).collect(Collectors.toList());
+    public List<TodoItem> findAllByCompleted(String user, boolean completed) {
+        init(user);
+        return todoItems.get(user).values().stream().filter(it -> it.isCompleted() == completed).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<TodoItem> findAll(String user) {
+        init(user);
+        return todoItems.get(user).values();
     }
 }
