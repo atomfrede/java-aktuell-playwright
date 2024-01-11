@@ -136,10 +136,10 @@ besitzt aber auch Erfahrung im Bau von Desktopanwendungen,
 angefangen von JSP-basierten Anwendungen über Wicket bis
 hin zu Angular und Vue.
 
-Seit 2022 bringt Frederik sein Wissen als Senior Software Engi-
-neer für die adesso SE am wunderschönen Standort Paderborn
-in verschiedene, meist Java-basierte Projekte ein. In der knap-
-pen freien Zeit organisiert er die Java User Group Paderborn, um
+Seit 2022 bringt Frederik sein Wissen als Senior Software Engineer
+für die adesso SE am wunderschönen Standort Paderborn
+in verschiedene, meist Java-basierte Projekte ein. In der knappen
+freien Zeit organisiert er die Java User Group Paderborn, um
 den Wissensaustausch in und um Paderborn zu fördern.
 
 Er ist seit 2015 teil des JHipster Core Teams und kümmert sich
