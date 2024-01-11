@@ -1,4 +1,4 @@
-= End-2-End Testing mit Playwright Java
+= Hauptüberschrift
 Frederik Hahne (adesso SE) <frederik.hahne@adesso.de>
 v1.0, 2023-06-05: Rohentwurf
 
@@ -17,12 +17,8 @@ v1.0, 2023-06-05: Rohentwurf
 :imagesdir: .
 
 [abstract]
-Während in letzter Zeit „Fullstack“ Entwicklung mit Java und Server-Side-Rendering wieder mehr
-in Mode gekommen ist muss man für End-2-End Tests entweder auf Javascript-basierte Frameworks zurückgreifen
-oder Selenium verwenden, mit allen Vor- und Nachteilen.
-In diesem Artikel werden wir Playwright Java als moderne Alternative zur
-Browserautomatisierung und End-2-End Testing vorstellen,
-sodass jeglicher Code mit Java geschrieben werden kann.
+Dies ist der Vorlauftext des Artikels, der in wenigen Sätzen beschreibt, welche Themen die Lesenden in Deinem Artikel erwarten.
+
 
 == Das ist eine Zwischenüberschrift
 
@@ -131,16 +127,4 @@ Die Auflistung der Quellenangaben beginnt in drei eckigen Klammern mit einer Kom
 
 == Über den Autoren/die Autorin
 
-Frederik entwickelt seit 2007 vorwiegend Webanwendungen, er
-besitzt aber auch Erfahrung im Bau von Desktopanwendungen,
-angefangen von JSP-basierten Anwendungen über Wicket bis
-hin zu Angular und Vue.
-
-Seit 2022 bringt Frederik sein Wissen als Senior Software Engi-
-neer für die adesso SE am wunderschönen Standort Paderborn
-in verschiedene, meist Java-basierte Projekte ein. In der knap-
-pen freien Zeit organisiert er die Java User Group Paderborn, um
-den Wissensaustausch in und um Paderborn zu fördern.
-
-Er ist seit 2015 teil des JHipster Core Teams und kümmert sich
-dort insbesondere um den Gradle Support.
+Hier hast Du die Möglichkeit, dich selbst in wenigen Sätzen zu präsentieren. Bitte verwende hierfür maximal 600 Zeichen inklusive Leerzeichen und schicke ein digitales Autorenfoto mit.
