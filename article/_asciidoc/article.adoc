@@ -1,6 +1,6 @@
 = End-2-End Testing mit Playwright Java
 Frederik Hahne (adesso SE) <frederik.hahne@adesso.de>
-v1.0, 2023-06-05: Rohentwurf
+v1.0, 2024-01-15: Rohentwurf
 
 // Die folgenden Attribute darfst Du NICHT verändern:
 :doctype: article
@@ -20,127 +20,49 @@ v1.0, 2023-06-05: Rohentwurf
 Während in letzter Zeit „Fullstack“ Entwicklung mit Java und Server-Side-Rendering wieder mehr
 in Mode gekommen ist muss man für End-2-End Tests entweder auf Javascript-basierte Frameworks zurückgreifen
 oder Selenium verwenden, mit allen Vor- und Nachteilen.
-In diesem Artikel werden wir Playwright Java als moderne Alternative zur
+In diesem Artikel werden wir Playwright Java <<Playwright-Website>> als moderne Alternative zur
 Browserautomatisierung und End-2-End Testing vorstellen,
 sodass jeglicher Code mit Java geschrieben werden kann.
 
-== Das ist eine Zwischenüberschrift
+== Playwright Java im Überblick
 
-Nun folgt der eigentliche Artikeltext. Bitte schreibe im Fließtext und gebe die Zeilenschaltung nur am Ende eines Absatzes ein. Zwischen Absätzen verwende bitte eine Leerzeile. Die automatische Trennung bitte ausschalten.
+Playwright ist eine von Microsoft entwickelte open-source Bibliothek zur Browserautomatisierung und end-2-end Testing.
+Playwright unterstützt verschiedene Browser und übernimmt auch die Installation auf jeder unterstützten Platform (Windows, Mac, Linux).
+Es existieren Implementierungen für TypeScript, JavaScript, Python, .NET und Java, wobei die Implementierung für Node.js die führende Variante ist.
+Eine Reihe von Tools erleichtert sowohl das Erstellen von Test als auch die Fehlersuche.
+Mithilfe des Codegen Tools können Klickpfade aufgezeichnet werden und in jeder unterstützten Sprache abgespeichert werden.
+Der Inspector erlaubt es Test schrittweise zu durchlaufen und dabei z.B. Locator ändern.
+Mit dem Trace-Viewer <<Playwright-Trace-Viewer>> kann man die Timeline eines ausgeführten Tests betrachten und somit im Fehlerfall das Problem identifizieren.
+Playwright verspricht, dass "flaky" Tests der Vergangenheit angehören unter anderem durch Auto-wait <<Playwright-Auto-Wait>> und automatischen Retries, sodass keine künstlichen Timeouts oder Wartezeiten in Tests eingebaut werden müssen.
+Neben Browsertests kann Playwright auch verwendet werden, um REST Apis zu testen, diesen Anwendungsfall werden wir hier nicht näher betrachten.
+Es ist ebenfalls möglich Anfragen und Antworten abzufangen und zu verändern um zum Beispiel das Verhalten der Anwendung im Fehlerfall zu prüfen.
 
-Text kann je nach Bedarf *fett* oder _kursiv_ oder *_fett und kursiv_* formatiert werden. Befehle oder ähnliches im Fliesstext können in `Monospace` geschrieben werden.
+== Playwright ohne Test Runner
 
+== Playwright mit JUnit
 
-== Tabellen formatieren
+== Ausblick
 
-Für Tabellen verwende bitte die Tabellenfunktion (keine TABs). Eine Referenz einfach per: xref:#table.one[]
-angeben.
-
-[[table.one]]
-.Überschrift der Tabelle
-|===
-|Überschrift Spalte 1 |Überschrift Spalte 2
-
-|Zelle in Spalte 1, Zeile 2
-|Zelle in Spalte 2, Zeile 2
-
-|Zelle in Spalte 1, Zeile 3
-|Zelle in Spalte 2, Zeile 3
-
-|Zelle in Spalte 1, Zeile 4
-|Zelle in Spalte 2, Zeile 4
-|===
-
-
-== Listings einfügen
-
-So sieht ein Listing aus, bitte gebe stets einen Textbezug mit an (bspw. „siehe Listing 1“).
-So erstellt man eine Referenz auf ein Listing: xref:#listing.structure[]
-
-[[listing.structure]]
-[source,text]
-.Direkt im Dokument eingebetteter Quelltext
-----
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
-}
-----
-
-Der Quelltext für das Listing kann alternativ auch aus einer Datei eingelesen werden, siehe Listing 2 (Diese Referenz ist manuell im Text angegeben).
-Hier das Listing 2 mit einer automatischen Referenz: xref:#listing.extern[].
-
-[[listing.extern]]
-.Komplett aus einer externen Datei eingebundener Quelltext
-----
-include::HelloWorld.java[]
-----
-
-Wenn nur ein Ausschnitt aus der angegebenen Datei eingebunden werden soll, so kann dieser mit Zeilennummern angegeben werden. Siehe Listing 3.
-Hier das Listing 3 mit einer automatischen Referenz: xref:#listing.extern.lines[].
-
-
-[[listing.extern.lines]]
-.Aus einer externen Datei eingebundene Ausschnitte
-----
-include::HelloWorld.java[lines=2..4]
-----
-
-Beachte bitte, dass AsciiDoc die Beschreibung über dem Listing anzeigt. In der _Java aktuell_ erscheint die Beschreibung unter dem Listing, daher "Listingunterschrift"!
-
-
-== Quellenangaben und Webseiten
-
-Quellenangaben <<TestQuelle>> und Links auf Webseiten <<JavaAktuell>>  sollten in zwei spitzen Klammern eine eindeutige ID verwenden, die am Ende des Artikels aufgelistet und dort mit den Details versehen werden. Die eindeutige ID kann mehrfach verwendet werden, um auf die gleiche Quelle hinzuweisen.
-
-
-== Bilder einbinden
-
-Hier folgt ein Beispiel für eine Abbildung, bitte gebe stets einen Textbezug mit an (bspw. „siehe Abbildung 1“). Bitte speichere die Abbildung separat im Format TIF oder JPEG in möglichst hoher Auflösung ab. EPS mit 300 dpi ist ebenfalls möglich. Wichtig ist die Bildunterschrift mit Copyright-Hinweis!
-Nun auch die Referenz im Text auf die Abbildung: xref:#bild.eins[]. So gemacht wird die Nummerierung automatisch gemacht.
-
-.Dies ist die Bildunterschrift (© [Name, Referenz oder Quelle])
-[id="bild.eins"]
-image::java_aktuell.png[]
-
-
-== Aufzählungen
-
-Dieser Satz leitet eine nummerierte Aufzählung ein:
-
-. Punkt 1
-. Punkt 2
-. Punkt 3
-
-Und dieser Satz leitet eine nicht nummerierte Aufzählung ein:
-
-* Punkt 1
-* Punkt 2
-* Punkt 3
+== Fazit
 
 
 [bibliography]
 == Quellen
 
-Die Auflistung der Quellenangaben beginnt in drei eckigen Klammern mit einer Kombination aus der im Artikel verwendeten eindeutigen ID und, mit Komma getrennt, einer fortlaufenden Zahl. Diese Zahl wird an der richtigen Stelle im Artikel als Verweis verwendet. So muss bei einer Neu-Numerierung nur diese eine Stelle angepasst werden. Anschliessend Text und Links wie gewünscht.
-
-- [[[TestQuelle,1]]] Autor(in) (Jahr): Titel. Verlag, Ort
-- [[[JavaAktuell,2]]] Java aktuell Website: link:https://www.ijug.eu/de/java-aktuell/zeitschrift/[]
+- [[[Playwright-Website,1]]] Playwright Website: link:https://playwright.dev/java//[]
+- [[[JavaAktuell,2]]] Frederik Hahne (2023): Java Aktuell 1/23, Moderne Frontends mit Thymeleaf, Spring Boot und HTMX
+- [[[Playwright-Trace-Viewer,3]]] Playwright Trace-Viewer: link:https://playwright.dev/java/docs/trace-viewer-intro[]
+- [[[Playwright-Auto-Wait,4]]] Auto-waiting Dokumentation: link:https://playwright.dev/java/docs/actionability[]
 
 
 == Über den Autoren/die Autorin
 
-Frederik entwickelt seit 2007 vorwiegend Webanwendungen, er
-besitzt aber auch Erfahrung im Bau von Desktopanwendungen,
-angefangen von JSP-basierten Anwendungen über Wicket bis
-hin zu Angular und Vue.
+Frederik entwickelt seit 2007 vorwiegend Webanwendungen, er besitzt aber auch Erfahrung im Bau von Desktopanwendungen,
+angefangen von JSP-basierten Anwendungen über Wicket bis hin zu Angular und Vue.
 
-Seit 2022 bringt Frederik sein Wissen als Senior Software Engineer
-für die adesso SE am wunderschönen Standort Paderborn
-in verschiedene, meist Java-basierte Projekte ein. In der knappen
-freien Zeit organisiert er die Java User Group Paderborn, um
-den Wissensaustausch in und um Paderborn zu fördern.
+Seit 2022 bringt Frederik sein Wissen als Senior Software Engineer für die adesso SE am wunderschönen Standort Paderborn
+in verschiedene, meist Java-basierte Projekte ein.
+In der knappen freien Zeit organisiert er die Java User Group Paderborn, um
+den Wissensaustausch, nicht nur zum Thema Java, in und um Paderborn zu fördern.
 
-Er ist seit 2015 teil des JHipster Core Teams und kümmert sich
-dort insbesondere um den Gradle Support.
+Er ist seit 2015 teil des JHipster Core Teams und kümmert sich dort insbesondere um den Gradle Support.
