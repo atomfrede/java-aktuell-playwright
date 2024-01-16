@@ -1,0 +1,5 @@
+= Playwright Java aktuell
+
+Beispielcode für End-2-End Testing mit Playwright Java.
+
+
