@@ -104,6 +104,8 @@ In folgenden Abschnitt werden uns die Verwendung mit JUnit 5 näher ansehen.
 
 == Playwright mit JUnit
 
+== CI/CD mit GitHub Actions
+
 == Ausblick
 
 == Fazit
