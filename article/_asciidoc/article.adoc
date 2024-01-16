@@ -35,9 +35,72 @@ Der Inspector erlaubt es Test schrittweise zu durchlaufen und dabei z.B. Locator
 Mit dem Trace-Viewer <<Playwright-Trace-Viewer>> kann man die Timeline eines ausgeführten Tests betrachten und somit im Fehlerfall das Problem identifizieren.
 Playwright verspricht, dass "flaky" Tests der Vergangenheit angehören unter anderem durch Auto-wait <<Playwright-Auto-Wait>> und automatischen Retries, sodass keine künstlichen Timeouts oder Wartezeiten in Tests eingebaut werden müssen.
 Neben Browsertests kann Playwright auch verwendet werden, um REST Apis zu testen, diesen Anwendungsfall werden wir hier nicht näher betrachten.
-Es ist ebenfalls möglich Anfragen und Antworten abzufangen und zu verändern um zum Beispiel das Verhalten der Anwendung im Fehlerfall zu prüfen.
+Es ist ebenfalls möglich Anfragen und Antworten abzufangen und zu verändern, um zum Beispiel das Verhalten der Anwendung im Fehlerfall zu prüfen.
 
 == Playwright ohne Test Runner
+
+Am schnellsten kann man Playwright ohne Test Runner verwenden (siehe xref:#listing.noTestRunner-1[]).
+Die Playwright API besteht im Kern aus folgenden Elementen:
+
+* `Playwright`
+* `Browser`
+* `Context`
+* `Page`
+
+`Playwright` ist der zentrale Einstiegspunkt.
+Mit einem erstellen `Playwright` Objekt kann dann ein `Browser` gestartet werden.
+Im Standard wird ein headless Browser gestartet.
+Ein `Context` dient zur Isolation von verschiedenen Browser Sessions, sodass z.B. verschiedene Benutzer voneinander unabhängig simuliert werden können.
+Das `Page` Objekt ist die elementare Klasse um mit dem Browser zu interagieren.
+Auf einer `Page` können HTML Elemente selektiert werden, Assertions geprüft werden oder Screenshots der aktuellen Seite angelegt werden.
+Als Benutzer muss man beachten, dass alle Objekte und Methoden der Playwright API nicht thread safe sind.
+Wie man anhand von xref:#listing.noTestRunner-1[] erkennen kann gibt es keine synthetischen waits oder sleeps innerhalb des Skriptes um z.B. auf das vollständige Laden der Seite zu warten.
+Playwright stellt sicher, dass z.B. die `click` Operation nur ausgeführt wird, wenn das Element auch klickbar ist.
+Sollte es innerhalb einer konfigurierbaren Zeit nicht klickbar sein schlägt die Operation endgültig fehl <<Playwright-Auto-Wait>>.
+Dadurch sind Playwright Test gut lesbar und verständlich.
+
+Als Nutzer wird man am meisten mit dem `Locator` interagieren.
+`Locator` dienen dazu Elemente auf der Webseite zu finden.
+Playwright empfiehlt in der Regel sichtbare Attribute oder Elemente mit einer festen Semantik zu verwenden <<Playwright-Locators>>.
+Ein Beispiel eines solchen Locators in xref:#listing.noTestRunner-1[] ist der `getByRole` Locator.
+Die Verwendung des generischen Locators sollte im Idealfall vermieden werden, stattdessen sollten die spezifischen `getByXYZ` Methoden verwendet werden um Elemente zu selektieren, da diese besser wiederspiegeln wie Benutzer (oder auch Screenreader) die Seite wahrnehmen.
+
+Der gesamte Code ist auf GitHub verfügbar <<Sample-Code>>.
+
+[[listing.noTestRunner-1]]
+[source,java]
+.Playwright Skript um das Titelthema der aktuellen Java aktuell herauszufinden
+----
+public class PlaywrightOhneTestRunner {
+    public static void main(String[] args) {
+       try (Playwright playwright = Playwright.create();
+                 Browser browser = playwright.firefox()
+                         .launch(new BrowserType.LaunchOptions().setHeadless(true))) {
+           BrowserContext context = browser.newContext();
+           page.navigate("https://www.ijug.eu/de/home/");
+
+           assertThat(page).hasTitle(Pattern.compile("Home: iJUG"));
+           page.locator("#nav-primary").getByRole(AriaRole.LINK, new Locator.GetByRoleOptions().setName("Java aktuell")).click();
+           assertThat(page).hasTitle("Java aktuell: iJUG");
+
+           page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Weitere Informationen zum Magazin")).click();
+           assertThat(page).hasTitle("Zeitschrift: iJUG");
+
+           page.locator(".article.news-badge").first().screenshot(new Locator.ScreenshotOptions().setPath(Paths.get("build", "aktuelle-ausgabe.png")));
+           String header = page.locator(".news-badge__content h3").first().innerText();
+           System.out.println(header.split(":")[1].trim());
+       }
+    }
+}
+----
+
+=== Erstellen von Traces
+
+
+
+Playwright ohne Test Runner zu verwenden ist eine gute Option, um zum Beispiel innerhalb einer eigenen Anwendung Webseiten zu crawlen.
+Um aber End-2-End Tests zu schreiben, bietet sich die Verwendung eines Test Runners wie JUnit oder TestNG an.
+In folgenden Abschnitt werden uns die Verwendung mit JUnit 5 näher ansehen.
 
 == Playwright mit JUnit
 
@@ -50,9 +113,11 @@ Es ist ebenfalls möglich Anfragen und Antworten abzufangen und zu verändern um
 == Quellen
 
 - [[[Playwright-Website,1]]] Playwright Website: link:https://playwright.dev/java//[]
-- [[[JavaAktuell,2]]] Frederik Hahne (2023): Java Aktuell 1/23, Moderne Frontends mit Thymeleaf, Spring Boot und HTMX
+- [[[JavaAktuell,2]]] Frederik Hahne (2023): Java aktuell 1/23, Moderne Frontends mit Thymeleaf, Spring Boot und HTMX
 - [[[Playwright-Trace-Viewer,3]]] Playwright Trace-Viewer: link:https://playwright.dev/java/docs/trace-viewer-intro[]
 - [[[Playwright-Auto-Wait,4]]] Auto-waiting Dokumentation: link:https://playwright.dev/java/docs/actionability[]
+- [[[Playwright-Locators,5]]] Locator Dokumentation: link:https://playwright.dev/java/docs/locators[]
+- [[[Sample-Code,6]]] Beispiel Code: link:https://github.com/atomfrede/java-aktuell-playwright[]
 
 
 == Über den Autoren/die Autorin
