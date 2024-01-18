@@ -32,16 +32,15 @@ dependencies {
 	implementation "org.webjars:webjars-locator:0.50"
 	implementation "org.webjars.npm:todomvc-common:1.0.5"
 	implementation "org.webjars.npm:todomvc-app-css:2.4.1"
-	testImplementation "com.microsoft.playwright:playwright:1.40.0"
+	testImplementation "com.microsoft.playwright:playwright:1.41.0"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 
 }
 
-
 // Usage: ./gradlew playwright --args="help"
-task playwright(type: JavaExec) {
+tasks.register("playwright", JavaExec) {
 	classpath sourceSets.test.runtimeClasspath
 	mainClass = 'com.microsoft.playwright.CLI'
 }

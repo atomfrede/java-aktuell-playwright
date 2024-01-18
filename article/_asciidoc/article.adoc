@@ -104,9 +104,23 @@ In folgenden Abschnitt werden uns die Verwendung mit JUnit 5 näher ansehen.
 
 == Playwright mit JUnit
 
+Zum Redaktionsschluss (Januar 2024) existiert noch keine offizielle Playwright JUnit Extension.
+Es existiert eine Community Extensions <<Playwright-Junit-Community>>.
+Der Autor arbeitet allerdings mit dem Playwright Team daran die offizielle Extension zu entwickeln, daher sind hier keine Weiterentwicklungen zu erwarten.
+Es existiert bereits eine erste Version der offiziellen Extensions, diese wurde bisher aber noch nicht veröffentlicht <<Playwright-Junit-Code>>.
+
+Generell ist die Integration von JUnit und Playwright relativ simpel <<Playwright-Junit>>.
+Vor einem Test muss der Browser gestartet werden und nach einem Test wieder geschlossen werden, die einfachste Option ist die Verwendung von `@BeforeAll`, `@AfterAll`, `@BeforeEach` und `@AfterEach`.
+In der mit `@BeforeAll` annotierten Methode wird der Browser gestartet, sodass dieser nur einmal pro Testklasse gestartet wird, da diese Operation relativ teuer ist.
+Damit jede Testmethode einen eigenen Context verwendet, wird in der `@BeforeEach` annotierten Methode jeweils ein neuer Context erzeugt.
+In den entsprechenden `@After` Methoden werden die erzeugten Objekte dann wieder geschlossen.
+
+
+=== Ausblick
+
+
 == CI/CD mit GitHub Actions
 
-== Ausblick
 
 == Fazit
 
@@ -120,7 +134,9 @@ In folgenden Abschnitt werden uns die Verwendung mit JUnit 5 näher ansehen.
 - [[[Playwright-Auto-Wait,4]]] Auto-waiting Dokumentation: link:https://playwright.dev/java/docs/actionability[]
 - [[[Playwright-Locators,5]]] Locator Dokumentation: link:https://playwright.dev/java/docs/locators[]
 - [[[Sample-Code,6]]] Beispiel Code: link:https://github.com/atomfrede/java-aktuell-playwright[]
-
+- [[[Playwright-Junit, 7]]] Playwright JUnit: link:https://github.com/atomfrede/java-aktuell-playwright[]
+- [[[Playwright-Junit-Community, 8]]] Playwright JUnit Community Extension: link:https://github.com/atomfrede/java-aktuell-playwright[]
+- [[[Playwright-Junit-Code, 9]]] Playwright JUnit Extension: link:https://github.com/microsoft/playwright-java/tree/ffe2bd4a966bf109c43eab4a9440d04c58fd4863/playwright/src/main/java/com/microsoft/playwright/junit[]
 
 == Über den Autoren/die Autorin
 
