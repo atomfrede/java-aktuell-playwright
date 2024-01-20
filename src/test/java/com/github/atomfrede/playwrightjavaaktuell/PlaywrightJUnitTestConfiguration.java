@@ -7,7 +7,7 @@ import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PlaywrightJUnit {
+class PlaywrightJUnitTestConfiguration {
 
     Playwright playwright;
     Browser browser;
