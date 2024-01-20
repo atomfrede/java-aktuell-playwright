@@ -88,7 +88,7 @@ public class PlaywrightOhneTestRunner {
 
            page.locator(".article.news-badge").first().screenshot(new Locator.ScreenshotOptions().setPath(Paths.get("build", "aktuelle-ausgabe.png")));
            String header = page.locator(".news-badge__content h3").first().innerText();
-           System.out.println(header.split(":")[1].trim());
+           System.out.println(header.split(":")[1].trim()); // --> Java aktuell 1/24: Java 21
        }
     }
 }
@@ -96,7 +96,43 @@ public class PlaywrightOhneTestRunner {
 
 === Erstellen von Traces
 
+Im Fall von fehlerhaften Tests ist es notwendig herauszufinden, warum der Test gescheitert ist.
+Playwright bietet mit der Trace Funktion <<Playwright-Trace-Viewer>> eine Alternative zu Screenshots, Videos oder der manuellen Beobachtung des Testablaufs im Browser.
 
+Um einen Tracedatei zu erzeugen, muss der Trace zunächst gestartet werden und am Ende gestoppt werden und die Datei gespeichert werden (siehe <<listing.noTestRunner-trace-2>>).
+Die Datei kann nun entweder lokal mit der Playwright CLI oder im Browser via https://trace.playwright.dev/ geöffnet werden.
+Im oberen Bereich sieht man die Zeitleiste des Tests, auf der linken Seite die einzelnen Schritte des Tests.
+Man kann jeden einzelnen Schritt nachverfolgen und Fehler so nachvollziehen.
+
+[[listing.noTestRunner-trace-2]]
+[source,java]
+.Erstellen einer Trace Datei
+----
+public class PlaywrightOhneTestRunner {
+    public static void main(String[] args) {
+       try (Playwright playwright = Playwright.create();
+                 Browser browser = playwright.firefox()
+                         .launch(new BrowserType.LaunchOptions().setHeadless(true))) {
+            BrowserContext context = browser.newContext();
+            context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
+
+            page.navigate("https://www.ijug.eu/de/home/");
+
+            // ...
+            context.tracing().stop(new Tracing.StopOptions()
+                        .setPath(Paths.get("build/ohneRunner/trace.zip")));
+
+       }
+    }
+}
+----
+
+.Ansicht eines Traces
+[id="bild.trace-view"]
+image::screenshot-trace-viewer.png[]
 
 Playwright ohne Test Runner zu verwenden ist eine gute Option, um zum Beispiel innerhalb einer eigenen Anwendung Webseiten zu crawlen.
 Um aber End-2-End Tests zu schreiben, bietet sich die Verwendung eines Test Runners wie JUnit oder TestNG an.
@@ -106,20 +142,39 @@ In folgenden Abschnitt werden uns die Verwendung mit JUnit 5 näher ansehen.
 
 Zum Redaktionsschluss (Januar 2024) existiert noch keine offizielle Playwright JUnit Extension.
 Es existiert eine Community Extensions <<Playwright-Junit-Community>>.
-Der Autor arbeitet allerdings mit dem Playwright Team daran die offizielle Extension zu entwickeln, daher sind hier keine Weiterentwicklungen zu erwarten.
-Es existiert bereits eine erste Version der offiziellen Extensions, diese wurde bisher aber noch nicht veröffentlicht <<Playwright-Junit-Code>>.
+Der Autor arbeitet allerdings mit dem Playwright Team daran, die offizielle Extension zu entwickeln, daher sind hier keine Weiterentwicklungen zu erwarten.
+Es existiert bereits eine erste Version der offiziellen Extension, diese wurde bisher aber noch nicht veröffentlicht <<Playwright-Junit-Code>>.
 
 Generell ist die Integration von JUnit und Playwright relativ simpel <<Playwright-Junit>>.
 Vor einem Test muss der Browser gestartet werden und nach einem Test wieder geschlossen werden, die einfachste Option ist die Verwendung von `@BeforeAll`, `@AfterAll`, `@BeforeEach` und `@AfterEach`.
 In der mit `@BeforeAll` annotierten Methode wird der Browser gestartet, sodass dieser nur einmal pro Testklasse gestartet wird, da diese Operation relativ teuer ist.
 Damit jede Testmethode einen eigenen Context verwendet, wird in der `@BeforeEach` annotierten Methode jeweils ein neuer Context erzeugt.
 In den entsprechenden `@After` Methoden werden die erzeugten Objekte dann wieder geschlossen.
+Es bietet sich an diese Funktionen in eine eigene Klasse auszulagern, von der alle End-2-End-Test dann ableiten.
 
+Zu beachten ist hier, dass der `Browser` pro Testklasse erzeugt wird.
+Für jede Testmethode wird ein neuer `BrowserContext` erzeugt.
+In der Standardkonfiguration führt JUnit alle Tests nacheinander in einem Thread aus.
+Da jede Testmethode durch einen eigenen `BrowserContext` isoliert ist können die Tests parallel ausgeführt werden.
+Mit der Annotation `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` teilt man JUnit mit, dass diese Klasse nur einmal für alle Testmethoden der abgeleiteten Klasse erstellt wird.
+Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (s. <<listing.junit-parallel-properties>>).
+
+[[listing.junit-parallel-properties]]
+[source,properties]
+.Konfigurationsparameter um JUnit Tests parallel auszuführen
+----
+junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.mode.default = same_thread
+junit.jupiter.execution.parallel.mode.classes.default = concurrent
+junit.jupiter.execution.parallel.config.strategy=dynamic
+junit.jupiter.execution.parallel.config.dynamic.factor=0.5
+----
 
 === Ausblick
 
 
-== CI/CD mit GitHub Actions
+
+
 
 
 == Fazit
