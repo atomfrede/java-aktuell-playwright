@@ -23,6 +23,7 @@ public class PlaywrightJUnitExtensionsE2E {
     private String baseUrl() {
         return "localhost:%s".formatted(port);
     }
+
     @BeforeEach
     void beforeEach(BrowserContext context, Page page) {
 
@@ -30,6 +31,15 @@ public class PlaywrightJUnitExtensionsE2E {
         // Save storage state into the file.
         context.storageState(new BrowserContext.StorageStateOptions()
                 .setPath(Paths.get("build/extension/state.json")));
+
+    }
+
+    @Test
+    void createNewTodo(Page page) {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+
+        todoPage.createNewTodo("Write article");
     }
 
     @Test
@@ -38,6 +48,4 @@ public class PlaywrightJUnitExtensionsE2E {
         TodoPage todoPage = new TodoPage(page, baseUrl());
         todoPage.navigate();
     }
-
-
 }

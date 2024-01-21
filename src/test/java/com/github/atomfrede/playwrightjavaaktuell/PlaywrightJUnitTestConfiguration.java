@@ -1,10 +1,9 @@
 package com.github.atomfrede.playwrightjavaaktuell;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import org.junit.jupiter.api.*;
+
+import java.nio.file.Paths;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaywrightJUnitTestConfiguration {
@@ -15,7 +14,7 @@ class PlaywrightJUnitTestConfiguration {
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.firefox().launch();
+        browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(false));
     }
 
     @AfterAll
@@ -23,7 +22,6 @@ class PlaywrightJUnitTestConfiguration {
         playwright.close();
     }
 
-    // New instance for each test method.
     BrowserContext context;
     Page page;
 
@@ -31,10 +29,19 @@ class PlaywrightJUnitTestConfiguration {
     void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
+
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
     }
 
     @AfterEach
-    void closeContext() {
+    void closeContext(TestInfo testInfo) {
+        String displayName = testInfo.getDisplayName();;
+
+        context.tracing().stop(new Tracing.StopOptions()
+                .setPath(Paths.get("build/ohneRunner/" + displayName +".zip")));
         context.close();
     }
 }
