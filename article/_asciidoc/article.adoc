@@ -39,6 +39,16 @@ Es ist ebenfalls möglich Anfragen und Antworten abzufangen und zu verändern, u
 
 == Playwright ohne Test Runner
 
+Um Playwright in seinem Projekt zu verwenden, genügt es, `com.microsoft.playwright:playwright` als Abhängigkeit hinzuzufügen.
+Im Beispiel mit Gradle (siehe xref:#listing.gradle-dependency[]), danach kann Playwright verwendet werden.
+
+[[listing.gradle-dependency]]
+[source,groovy]
+.Playwright Skript um das Titelthema der aktuellen Java aktuell herauszufinden
+----
+testImplementation "com.microsoft.playwright:playwright:1.41.0"
+----
+
 Am schnellsten kann man Playwright ohne Test Runner verwenden (siehe xref:#listing.noTestRunner-1[]).
 Die Playwright API besteht im Kern aus folgenden Elementen:
 
@@ -99,13 +109,13 @@ public class PlaywrightOhneTestRunner {
 Im Fall von fehlerhaften Tests ist es notwendig herauszufinden, warum der Test gescheitert ist.
 Playwright bietet mit der Trace Funktion <<Playwright-Trace-Viewer>> eine Alternative zu Screenshots, Videos oder der manuellen Beobachtung des Testablaufs im Browser.
 
-Um einen Tracedatei zu erzeugen, muss der Trace zunächst gestartet werden und am Ende gestoppt werden und die Datei gespeichert werden (siehe <<listing.noTestRunner-trace-2>>).
+Um einen Tracedatei zu erzeugen, muss der Trace zunächst gestartet werden und am Ende gestoppt werden und die Datei gespeichert werden (siehe xref:#listing.noTestRunner-trace-2[]).
 Die Datei kann nun entweder lokal mit der Playwright CLI oder im Browser via https://trace.playwright.dev/ geöffnet werden.
 Im oberen Bereich sieht man die Zeitleiste des Tests, auf der linken Seite die einzelnen Schritte des Tests.
-Man kann jeden einzelnen Schritt nachverfolgen und Fehler so nachvollziehen.
+Man kann jeden einzelnen Schritt nachverfolgen und Fehler so nachvollziehen (Siehe xref:#bild.trace-view[]).
 
 [[listing.noTestRunner-trace-2]]
-[source,java]
+[source,text]
 .Erstellen einer Trace Datei
 ----
 public class PlaywrightOhneTestRunner {
@@ -150,17 +160,108 @@ Vor einem Test muss der Browser gestartet werden und nach einem Test wieder gesc
 In der mit `@BeforeAll` annotierten Methode wird der Browser gestartet, sodass dieser nur einmal pro Testklasse gestartet wird, da diese Operation relativ teuer ist.
 Damit jede Testmethode einen eigenen Context verwendet, wird in der `@BeforeEach` annotierten Methode jeweils ein neuer Context erzeugt.
 In den entsprechenden `@After` Methoden werden die erzeugten Objekte dann wieder geschlossen.
-Es bietet sich an diese Funktionen in eine eigene Klasse auszulagern, von der alle End-2-End-Test dann ableiten.
+Wenn ein neuer `Context` erzeugt wird kann bei Bedarf das Tracing eingeschaltet werden.
+Beim Schließen des `Context` kann die Tracedatei gespeichert werden.
+Es bietet sich an diese Funktionen in eine eigene Klasse auszulagern, von der alle End-2-End-Test dann ableiten (xref:#listing.junit-config[]).
+
+[[listing.junit-config]]
+[source,java]
+.Playwright JUnit Oberklasse
+----
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class PlaywrightJUnitTestConfiguration {
+
+    Playwright playwright;
+    Browser browser;
+
+    @BeforeAll
+    void launchBrowser() {
+        playwright = Playwright.create();
+        browser = playwright.firefox().launch();
+    }
+
+    @AfterAll
+    void closeBrowser() {
+        playwright.close();
+    }
+
+    BrowserContext context;
+    Page page;
+
+    @BeforeEach
+    void createContextAndPage() {
+        context = browser.newContext();
+        page = context.newPage();
+
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
+    }
+
+    @AfterEach
+    void closeContext(TestInfo testInfo) {
+        String displayName = testInfo.getDisplayName();;
+
+        context.tracing().stop(new Tracing.StopOptions()
+                .setPath(Paths.get("build/ohneRunner/" + displayName +".zip")));
+        context.close();
+    }
+}
+----
+
+Um Tests zu strukturieren oder Funktionen in verschiedenen Testmethoden wieder verwenden zu können, bietet es sich an sog. Page Object Models zu verwenden <<Playwright-Page-Objects>>.
+Ein Page Object benötigt die `Page` und definiert alle relevanten `Locator` als Felder, die dann z.B. im Constructor definiert werden.
+Erst zum Zeitpunkt der Verwendung versucht Playwright die Elemente im DOM zu finden (siehe xref:#listing.pom-todo[]).
+
+[[listing.pom-todo]]
+[source,java]
+.Page Object Model der Todo Seite
+----
+public class TodoPage {
+
+    private String baseUrl;
+    private Page page;
+    private Locator pageHeading;
+    private Locator titleInput;
+    private Locator todoListItems;
+
+    public TodoPage(Page page, String baseUrl) {
+        this.baseUrl = baseUrl;
+        this.page = page;
+
+        pageHeading = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("todos"));
+        titleInput = page.getByPlaceholder("What needs to be done?");
+        todoListItems = page.locator(".todo-list");
+    }
+
+    public void navigate() {
+        page.navigate(baseUrl);
+
+        PlaywrightAssertions.assertThat(pageHeading).isVisible();
+    }
+
+    public void createNewTodo(String title) {
+        titleInput.fill(title);
+        titleInput.press("Enter");
+
+        PlaywrightAssertions.assertThat(todoListItems).isVisible();
+
+        Assertions.assertThat(todoListItems.locator(".view").first().innerText()).isEqualTo(title);
+
+    }
+}
+----
 
 Zu beachten ist hier, dass der `Browser` pro Testklasse erzeugt wird.
 Für jede Testmethode wird ein neuer `BrowserContext` erzeugt.
 In der Standardkonfiguration führt JUnit alle Tests nacheinander in einem Thread aus.
 Da jede Testmethode durch einen eigenen `BrowserContext` isoliert ist können die Tests parallel ausgeführt werden.
 Mit der Annotation `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` teilt man JUnit mit, dass diese Klasse nur einmal für alle Testmethoden der abgeleiteten Klasse erstellt wird.
-Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (s. <<listing.junit-parallel-properties>>).
+Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (siehe. xref:#listing.junit-parallel-properties[]).
 
 [[listing.junit-parallel-properties]]
-[source,properties]
+[source,text]
 .Konfigurationsparameter um JUnit Tests parallel auszuführen
 ----
 junit.jupiter.execution.parallel.enabled = true
@@ -171,6 +272,57 @@ junit.jupiter.execution.parallel.config.dynamic.factor=0.5
 ----
 
 === Ausblick
+
+Mit der in Entwicklung befindlichen offiziellen JUnit Playwright Extension (<<Playwright-Junit-Code>>) reduziert sich die Konfiguration auf einige wenige Annotationen.
+Außerdem wird es möglich sein, Traces nur für fehlerhafte Tests zu schreiben, ohne einen eigenen JUnit Test Listener schreiben zu müssen.
+Die notwendigen Objekte der Playwright API können als Parameter injiziert werden, sodass keine gemeinsame Oberklasse mehr notwendig ist.
+Zudem sorgt die Erweiterung für die korrekte, thread safe Erzeugung aller Playwright Objekte.
+Die Verwendung wird sehr wahrscheinlich so aussehen wie in xref:#listing.junit-extensions[] dargestellt.
+In der Klasse `DefaultPlaywrightOptions` kann die Konfiguration (z.B. Browser) definiert werden.
+
+[[listing.junit-extensions]]
+[source,java]
+.Vorschau auf die JUnit Playwright Extension
+----
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@UsePlaywright(options = DefaultPlaywrightOptions.class)
+public class PlaywrightJUnitExtensionsE2E {
+
+    @LocalServerPort
+    private int port;
+
+    private String baseUrl() {
+        return "localhost:%s".formatted(port);
+    }
+
+    @BeforeEach
+    void beforeEach(BrowserContext context, Page page) {
+
+        new LoginPage(page, baseUrl()).doLogin("user", "password");
+        // Save storage state into the file.
+        context.storageState(new BrowserContext.StorageStateOptions()
+                .setPath(Paths.get("build/extension/state.json")));
+
+    }
+
+    @Test
+    void createNewTodo(Page page) {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+
+        todoPage.createNewTodo("Write article");
+    }
+
+    @Test
+    void smokeTest(Page page) {
+
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+    }
+}
+----
+
+
 
 
 
@@ -192,6 +344,7 @@ junit.jupiter.execution.parallel.config.dynamic.factor=0.5
 - [[[Playwright-Junit, 7]]] Playwright JUnit: link:https://github.com/atomfrede/java-aktuell-playwright[]
 - [[[Playwright-Junit-Community, 8]]] Playwright JUnit Community Extension: link:https://github.com/atomfrede/java-aktuell-playwright[]
 - [[[Playwright-Junit-Code, 9]]] Playwright JUnit Extension: link:https://github.com/microsoft/playwright-java/tree/ffe2bd4a966bf109c43eab4a9440d04c58fd4863/playwright/src/main/java/com/microsoft/playwright/junit[]
+- [[[Playwright-Page-Objects, 10]]] Page Object Models: link:https://playwright.dev/java/docs/pom[]
 
 == Über den Autoren/die Autorin
 
