@@ -155,6 +155,12 @@ Es existiert eine Community Extensions <<Playwright-Junit-Community>>.
 Der Autor arbeitet allerdings mit dem Playwright Team daran, die offizielle Extension zu entwickeln, daher sind hier keine Weiterentwicklungen zu erwarten.
 Es existiert bereits eine erste Version der offiziellen Extension, diese wurde bisher aber noch nicht veröffentlicht <<Playwright-Junit-Code>>.
 
+Als Beispiel verwenden wir eine angepasste Variante der in <<JavaAktuell>> erstellten Todo Anwendung auf Basis von Spring Boot und Thymeleaf (siehe xref:#bild.todomvc[]).
+
+.TodoMVC auf Basis von Spring Boot und Thymeleaf
+[id="bild.todomvc"]
+image::screenshot-todomvc.png[]
+
 Generell ist die Integration von JUnit und Playwright relativ simpel <<Playwright-Junit>>.
 Vor einem Test muss der Browser gestartet werden und nach einem Test wieder geschlossen werden, die einfachste Option ist die Verwendung von `@BeforeAll`, `@AfterAll`, `@BeforeEach` und `@AfterEach`.
 In der mit `@BeforeAll` annotierten Methode wird der Browser gestartet, sodass dieser nur einmal pro Testklasse gestartet wird, da diese Operation relativ teuer ist.
