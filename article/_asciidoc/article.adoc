@@ -396,6 +396,8 @@ Insbesondere in Projekten, in denen die Verwendung der node.js Variante nicht od
 Es hat sich im Projektalltag bei der adesso SE bereits bewährt.
 Mit der kommenden JUnit Erweiterung wird die Verwendung in Java vereinfacht, sodass einer Verwendung nichts mehr im Wege stehen sollte.
 Abseits von End-2-End Testing kann Playwright auch im Anwendungscode verwendet werden, um z.B. Webseiten zu crawlen, sofern keine API zur Verfügung steht.
+Eine Integration in typische Buildpipelines ist problemlos möglich.
+Neben einer offiziellen GitHub Action stellt das Playwright Team fertige Container bereit in denen Playwright ausgeführt werden kann.
 
 Allerdings sollte man die Nutzung der node.js Variante nicht kategorisch ausschließen, da diese einige Features bietet, die vermutlich niemals in dieser Form mit JUnit erreicht werden können.
 Zum einen ist der erzeugte Report sehr mächtig.
