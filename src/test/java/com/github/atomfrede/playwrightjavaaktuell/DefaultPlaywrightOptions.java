@@ -13,6 +13,6 @@ public class DefaultPlaywrightOptions extends Options {
 
     @Override
     public Boolean isHeadless() {
-        return false;
+        return true;
     }
 }

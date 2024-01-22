@@ -14,7 +14,7 @@ class PlaywrightJUnitTestConfiguration {
     @BeforeAll
     void launchBrowser() {
         playwright = Playwright.create();
-        browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
     }
 
     @AfterAll

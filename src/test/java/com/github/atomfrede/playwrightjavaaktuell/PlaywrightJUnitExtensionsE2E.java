@@ -6,6 +6,7 @@ import com.github.atomfrede.playwrightjavaaktuell.page_objects.TodoPage;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,6 @@ public class PlaywrightJUnitExtensionsE2E {
     void beforeEach(BrowserContext context, Page page) {
 
         new LoginPage(page, baseUrl()).doLogin("user", "password");
-        // Save storage state into the file.
         context.storageState(new BrowserContext.StorageStateOptions()
                 .setPath(Paths.get("build/extension/state.json")));
 
@@ -40,6 +40,27 @@ public class PlaywrightJUnitExtensionsE2E {
         todoPage.navigate();
 
         todoPage.createNewTodo("Write article");
+    }
+
+    @Test
+    void completeAllTodos(Page page) {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+
+        todoPage.createNewTodo("Write article");
+        todoPage.createNewTodo("Javaland");
+
+        todoPage.completeAllTodos();
+    }
+
+    @Test
+    void completeTodo(Page page) {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+
+        todoPage.createNewTodo("Write article");
+
+        todoPage.completeFirstTodo();
     }
 
     @Test

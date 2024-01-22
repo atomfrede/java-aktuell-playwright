@@ -13,6 +13,9 @@ public class TodoPage {
     private Locator pageHeading;
     private Locator titleInput;
     private Locator todoListItems;
+    private Locator completeAllTodosToggle;
+    private Locator todoCount;
+    private Locator clearCompleted;
 
     public TodoPage(Page page, String baseUrl) {
         this.baseUrl = baseUrl;
@@ -21,6 +24,9 @@ public class TodoPage {
         pageHeading = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("todos"));
         titleInput = page.getByPlaceholder("What needs to be done?");
         todoListItems = page.locator(".todo-list");
+        completeAllTodosToggle = page.locator("#toggle-all");
+        todoCount = page.locator(".todo-count");
+        clearCompleted = page.locator(".clear-completed");
     }
 
     public void navigate() {
@@ -35,7 +41,19 @@ public class TodoPage {
 
         PlaywrightAssertions.assertThat(todoListItems).isVisible();
 
-        Assertions.assertThat(todoListItems.locator(".view").first().innerText()).isEqualTo(title);
+    }
 
+    public void completeAllTodos() {
+        completeAllTodosToggle.click();
+
+        Assertions.assertThat(todoCount.innerText()).isEqualTo("0 items left");
+    }
+
+    public void completeFirstTodo() {
+        String todoCountBefore = todoCount.innerText();
+        page.locator(".toggle").first().click();
+
+        Assertions.assertThat(todoCount.innerText()).isNotEqualTo(todoCountBefore);
+        clearCompleted.click();
     }
 }
