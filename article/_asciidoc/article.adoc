@@ -271,7 +271,6 @@ public class TodoPage {
 
     public void navigate() {
         page.navigate(baseUrl);
-
         PlaywrightAssertions.assertThat(pageHeading).isVisible();
     }
 
@@ -280,7 +279,6 @@ public class TodoPage {
         titleInput.press("Enter");
 
         PlaywrightAssertions.assertThat(todoListItems).isVisible();
-
     }
 
     public void completeAllTodos() {
@@ -344,18 +342,15 @@ public class PlaywrightJUnitExtensionsE2E {
 
     @BeforeEach
     void beforeEach(BrowserContext context, Page page) {
-
         new LoginPage(page, baseUrl()).doLogin("user", "password");
         context.storageState(new BrowserContext.StorageStateOptions()
                 .setPath(Paths.get("build/extension/state.json")));
-
     }
 
     @Test
     void createNewTodo(Page page) {
         TodoPage todoPage = new TodoPage(page, baseUrl());
         todoPage.navigate();
-
         todoPage.createNewTodo("Write article");
     }
 
@@ -363,10 +358,8 @@ public class PlaywrightJUnitExtensionsE2E {
     void completeAllTodos(Page page) {
         TodoPage todoPage = new TodoPage(page, baseUrl());
         todoPage.navigate();
-
         todoPage.createNewTodo("Write article");
         todoPage.createNewTodo("Javaland");
-
         todoPage.completeAllTodos();
     }
 
@@ -374,17 +367,8 @@ public class PlaywrightJUnitExtensionsE2E {
     void completeTodo(Page page) {
         TodoPage todoPage = new TodoPage(page, baseUrl());
         todoPage.navigate();
-
         todoPage.createNewTodo("Write article");
-
         todoPage.completeFirstTodo();
-    }
-
-    @Test
-    void smokeTest(Page page) {
-
-        TodoPage todoPage = new TodoPage(page, baseUrl());
-        todoPage.navigate();
     }
 }
 ----
