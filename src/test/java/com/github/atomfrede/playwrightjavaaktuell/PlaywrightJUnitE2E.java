@@ -38,6 +38,14 @@ public class PlaywrightJUnitE2E extends PlaywrightJUnitTestConfiguration {
     }
 
     @Test
+    void logout() {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+
+        todoPage.logout();
+    }
+
+    @Test
     void smokeTest() {
 
         TodoPage todoPage = new TodoPage(page, baseUrl());

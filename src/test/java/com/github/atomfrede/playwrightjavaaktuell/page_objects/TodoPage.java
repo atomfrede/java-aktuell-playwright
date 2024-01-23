@@ -16,6 +16,7 @@ public class TodoPage {
     private Locator completeAllTodosToggle;
     private Locator todoCount;
     private Locator clearCompleted;
+    private Locator logoutButton;
 
     public TodoPage(Page page, String baseUrl) {
         this.baseUrl = baseUrl;
@@ -27,6 +28,7 @@ public class TodoPage {
         completeAllTodosToggle = page.locator("#toggle-all");
         todoCount = page.locator(".todo-count");
         clearCompleted = page.locator(".clear-completed");
+        logoutButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign out"));
     }
 
     public void navigate() {
@@ -55,5 +57,10 @@ public class TodoPage {
 
         Assertions.assertThat(todoCount.innerText()).isNotEqualTo(todoCountBefore);
         clearCompleted.click();
+    }
+
+    public void logout() {
+        logoutButton.click();
+        PlaywrightAssertions.assertThat(page.getByRole(AriaRole.ALERT)).isVisible();
     }
 }

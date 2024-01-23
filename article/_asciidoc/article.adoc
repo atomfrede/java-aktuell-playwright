@@ -256,6 +256,7 @@ public class TodoPage {
     private Locator completeAllTodosToggle;
     private Locator todoCount;
     private Locator clearCompleted;
+    private Locator logoutButton;
 
     public TodoPage(Page page, String baseUrl) {
         this.baseUrl = baseUrl;
@@ -267,6 +268,7 @@ public class TodoPage {
         completeAllTodosToggle = page.locator("#toggle-all");
         todoCount = page.locator(".todo-count");
         clearCompleted = page.locator(".clear-completed");
+        logoutButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign out"));
     }
 
     public void navigate() {
@@ -294,6 +296,11 @@ public class TodoPage {
         Assertions.assertThat(todoCount.innerText()).isNotEqualTo(todoCountBefore);
         clearCompleted.click();
     }
+
+    public void logout() {
+        logoutButton.click();
+        PlaywrightAssertions.assertThat(page.getByRole(AriaRole.ALERT)).isVisible();
+    }
 }
 ----
 
@@ -304,11 +311,42 @@ Da jede Testmethode durch einen eigenen `BrowserContext` isoliert ist können di
 Mit der Annotation `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` teilt man JUnit mit, dass diese Klasse nur einmal für alle Testmethoden der abgeleiteten Klasse erstellt wird.
 Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (siehe. xref:#listing.junit-parallel-properties[]).
 
+Ein abgeleiteter `@SpringBootTest` enthält dann keine Besonderheiten im Vergleich zum Beispiel zu einem Test, der RestAssured verwendet.
+Vor jeder Testmethode wird ein Benutzer eingeloggt, jeder Test verwendet die in den Page-Objekten gekapselten Funktionen, sodass kaum Playwright spezifische Funktionen in den Tests selber verwendet werden (siehe xref:#listing.junit-config[]).
+
+[[listing.junit-config]]
+[source,java]
+.Playwright Test mit JUnit
+----
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class PlaywrightJUnitE2E extends PlaywrightJUnitTestConfiguration {
+
+    @LocalServerPort
+    private int port;
+
+    private String baseUrl() {
+        return "localhost:%s".formatted(port);
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        new LoginPage(page, baseUrl()).doLogin("user", "password");
+    }
+
+    @Test
+    void createNewTodo() {
+        TodoPage todoPage = new TodoPage(page, baseUrl());
+        todoPage.navigate();
+        todoPage.createNewTodo("Write article");
+    }
+}
+----
+
 [[listing.junit-parallel-properties]]
 [source,text]
 .Konfigurationsparameter um JUnit Tests parallel auszuführen
 ----
-junit.jupiter.execution.parallel.enabled = true
+junit.jupiter.execution.parallel.enabled = true.
 junit.jupiter.execution.parallel.mode.default = same_thread
 junit.jupiter.execution.parallel.mode.classes.default = concurrent
 junit.jupiter.execution.parallel.config.strategy=dynamic
