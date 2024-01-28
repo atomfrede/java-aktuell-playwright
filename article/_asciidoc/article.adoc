@@ -93,6 +93,8 @@ Als Nutzer wird man am meisten mit dem `Locator` interagieren.
 Playwright empfiehlt in der Regel sichtbare Attribute oder Elemente mit einer festen Semantik zu verwenden <<Playwright-Locators>>.
 Ein Beispiel eines solchen Locators in xref:#listing.noTestRunner-1[] ist der `getByRole` Locator.
 Die Verwendung des generischen Locators sollte im Idealfall vermieden werden, stattdessen sollten die spezifischen `getByXYZ` Methoden verwendet werden um Elemente zu selektieren, da diese besser wiederspiegeln wie Benutzer (oder auch Screenreader) die Seite wahrnehmen.
+Es lässt sich natürlich nicht immer vermeiden technische `Locator` zu verwenden, insbesondere, wenn kein semantisches HTML verwendet wird, sondern verschachtelte divs mit Klassen.
+Der spezielle `Locator` für "test ids" vereinfacht die Verwendung von `data-testid` Attributen, die in der Regel stabiler sind als Texte einer Webanwendung.
 
 Der gesamte Code ist auf GitHub verfügbar <<Sample-Code>>.
 
@@ -314,7 +316,7 @@ Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (sie
 Ein abgeleiteter `@SpringBootTest` enthält dann keine Besonderheiten im Vergleich zum Beispiel zu einem Test, der RestAssured verwendet.
 Vor jeder Testmethode wird ein Benutzer eingeloggt, jeder Test verwendet die in den Page-Objekten gekapselten Funktionen, sodass kaum Playwright spezifische Funktionen in den Tests selber verwendet werden (siehe xref:#listing.junit-config[]).
 
-[[listing.junit-config]]
+[[listing.junit-test]]
 [source,java]
 .Playwright Test mit JUnit
 ----
