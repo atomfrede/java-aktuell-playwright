@@ -314,7 +314,7 @@ Mit der Annotation `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` teilt man J
 Um nun die Tests parallel auszuführen, muss JUnit noch konfiguriert werden (siehe. xref:#listing.junit-parallel-properties[]).
 
 Ein abgeleiteter `@SpringBootTest` enthält dann keine Besonderheiten im Vergleich zum Beispiel zu einem Test, der RestAssured verwendet.
-Vor jeder Testmethode wird ein Benutzer eingeloggt, jeder Test verwendet die in den Page-Objekten gekapselten Funktionen, sodass kaum Playwright spezifische Funktionen in den Tests selber verwendet werden (siehe xref:#listing.junit-config[]).
+Vor jeder Testmethode wird ein Benutzer eingeloggt, jeder Test verwendet die in den Page-Objekten gekapselten Funktionen, sodass kaum Playwright spezifische Funktionen in den Tests selber verwendet werden (siehe xref:#listing.junit-test[]).
 
 [[listing.junit-test]]
 [source,java]
@@ -438,8 +438,8 @@ Visuelle Regressionstests sind integraler Bestandteil der node.js API.
 - [[[Playwright-Auto-Wait,4]]] Auto-waiting Dokumentation: link:https://playwright.dev/java/docs/actionability[]
 - [[[Playwright-Locators,5]]] Locator Dokumentation: link:https://playwright.dev/java/docs/locators[]
 - [[[Sample-Code,6]]] Beispiel Code: link:https://github.com/atomfrede/java-aktuell-playwright[]
-- [[[Playwright-Junit, 7]]] Playwright JUnit: link:https://github.com/atomfrede/java-aktuell-playwright[]
-- [[[Playwright-Junit-Community, 8]]] Playwright JUnit Community Extension: link:https://github.com/atomfrede/java-aktuell-playwright[]
+- [[[Playwright-Junit, 7]]] Playwright JUnit: link:https://playwright.dev/java/docs/test-runners#junit[]
+- [[[Playwright-Junit-Community, 8]]] Playwright JUnit Community Extension: link:https://github.com/uchagani/junit-playwright[]
 - [[[Playwright-Junit-Code, 9]]] Playwright JUnit Extension: link:https://github.com/microsoft/playwright-java/tree/ffe2bd4a966bf109c43eab4a9440d04c58fd4863/playwright/src/main/java/com/microsoft/playwright/junit[]
 - [[[Playwright-Page-Objects, 10]]] Page Object Models: link:https://playwright.dev/java/docs/pom[]
 
