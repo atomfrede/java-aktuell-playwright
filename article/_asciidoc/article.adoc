@@ -26,9 +26,9 @@ sodass jeglicher Code mit Java geschrieben werden kann.
 
 == Playwright Java im Überblick
 
-Playwright ist eine von Microsoft entwickelte open-source Bibliothek zur Browserautomatisierung und End-2-End Testing.
+Playwright <<Playwright-Website>> ist eine von Microsoft entwickelte open-source Bibliothek zur Browserautomatisierung und End-2-End Testing.
 Playwright unterstützt verschiedene Browser und übernimmt auch die Installation auf jeder unterstützten Platform (Windows, Mac, Linux).
-Es existieren Implementierungen für TypeScript, JavaScript, Python, .NET und Java, wobei die Implementierung für Node.js die führende Variante ist.
+Es existieren Implementierungen für Node.js (TypeScript, JavaScript), Python, .NET und Java, wobei die Implementierung für Node.js die führende Variante ist.
 Eine Reihe von Tools erleichtert sowohl das Erstellen von Test als auch die Fehlersuche.
 Mithilfe des Codegen Tools können Klickpfade aufgezeichnet werden und in jeder unterstützten Sprache abgespeichert werden.
 Der Inspector erlaubt es Test schrittweise zu durchlaufen und dabei z.B. Locator ändern.
@@ -130,9 +130,9 @@ public class PlaywrightOhneTestRunner {
 Im Fall von fehlerhaften Tests ist es notwendig herauszufinden, warum der Test gescheitert ist.
 Playwright bietet mit der Trace Funktion <<Playwright-Trace-Viewer>> eine Alternative zu Screenshots, Videos oder der manuellen Beobachtung des Testablaufs im Browser.
 
-Um einen Tracedatei zu erzeugen, muss der Trace zunächst gestartet werden und am Ende gestoppt werden und die Datei gespeichert werden (siehe xref:#listing.noTestRunner-trace-2[]).
+Um einen Tracedatei zu erzeugen, muss die Aufzeichnung des Trace zunächst gestartet werden und am Ende gestoppt werden und die Datei gespeichert werden (siehe xref:#listing.noTestRunner-trace-2[]).
 Die Datei kann nun entweder lokal mit der Playwright CLI oder im Browser via https://trace.playwright.dev/ geöffnet werden.
-Um einen Trace lokal zu öffnen, muss der Parameter `show-trace` und der Pfad zur Tracedatei übergeben werden.
+Um einen Trace lokal zu öffnen, muss der Parameter `show-trace` und der Pfad zur Tracedatei übergeben werden (`gradlew playwright --args="show-trace build/ohneRunner/trace.zip"`).
 Im oberen Bereich sieht man die Zeitleiste des Tests, auf der linken Seite die einzelnen Schritte des Tests.
 Man kann jeden einzelnen Schritt nachverfolgen und Fehler so nachvollziehen (Siehe xref:#bild.trace-view[]).
 
@@ -178,7 +178,7 @@ Es existiert eine Community Extensions <<Playwright-Junit-Community>>.
 Der Autor arbeitet allerdings mit dem Playwright Team daran, die offizielle Extension zu entwickeln, daher sind hier keine Weiterentwicklungen zu erwarten.
 Es existiert bereits eine erste Version der offiziellen Extension, diese wurde bisher aber noch nicht veröffentlicht <<Playwright-Junit-Code>>.
 
-Als Beispiel verwenden wir eine angepasste Variante der in <<JavaAktuell>> erstellten TodoMVC Anwendung auf Basis von Spring Boot und Thymeleaf (siehe xref:#bild.todomvc[]).
+Als Beispielanwendung verwenden wir eine angepasste Variante der in <<JavaAktuell>> erstellten TodoMVC Anwendung auf Basis von Spring Boot und Thymeleaf (siehe xref:#bild.todomvc[]).
 
 .TodoMVC auf Basis von Spring Boot und Thymeleaf
 [id="bild.todomvc"]
@@ -240,7 +240,7 @@ class PlaywrightJUnitTestConfiguration {
 }
 ----
 
-Um Tests zu strukturieren oder Funktionen in verschiedenen Testmethoden wieder verwenden zu können, bietet es sich an sog. Page Object Models zu verwenden <<Playwright-Page-Objects>>.
+Um Tests zu strukturieren oder Funktionen in verschiedenen Testmethoden wieder verwenden zu können, bietet es sich an sogenannte Page Object Models zu verwenden <<Playwright-Page-Objects>>.
 Ein Page Object benötigt die `Page` und definiert alle relevanten `Locator` als Felder, die dann z.B. im Constructor definiert werden.
 Erst zum Zeitpunkt der Verwendung versucht Playwright die Elemente im DOM zu finden (siehe xref:#listing.pom-todo[]).
 
